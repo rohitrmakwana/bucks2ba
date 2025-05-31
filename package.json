@@ -1,0 +1,12 @@
+{
+  "name": "bucks2ba",
+  "version": "1.0.0",
+  "description": "## Description The bucks2ba project is a simple web application that utilizes Bootstrap for responsive design and custom styles and scripts for enhanced functionality.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}
