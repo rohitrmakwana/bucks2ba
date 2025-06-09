@@ -1,81 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
-  //input with id "username" on change event
-  document.getElementById("username").addEventListener("input", function () {
-    // Get the value of the input field
-    var username = document.getElementById("username").value;
-    //regex to check if username has at lease 1 capital letter, 1 special character, 1 number, and is at lease 8 characters long
-    var regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  // Input with id "username" on change event
+  const usernameInput = document.getElementById("username");
+  usernameInput.addEventListener("input", () => {
+    const username = usernameInput.value;
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-    // Check if the value matches the regex
-    if (regex.test(username)) {
-      // If it matches, set the border color to green
-      document.getElementById("username").style.borderColor = "green";
-    } else {
-      // If it doesn't match, set the border color to red
-      document.getElementById("username").style.borderColor = "red";
-    }
+    usernameInput.style.borderColor = regex.test(username) ? "green" : "red";
   });
 
   let chartInitialized = false;
 
+  // Define months globally within the initializeChart function scope
+  const months = [
+    "january",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
+
   // Function to initialize the chart
-  function initializeChart() {
+  const initializeChart = () => {
     const ctx = document.getElementById("barChart").getContext("2d");
 
     // Function to retrieve income and expenses for each month
-    function getMonthlyData() {
-      const months = [
-        "january",
-        "february",
-        "march",
-        "april",
-        "may",
-        "june",
-        "july",
-        "august",
-        "september",
-        "october",
-        "november",
-        "december",
-      ];
-
-      const incomeData = [];
-      const expensesData = [];
-
-      months.forEach(month => {
+    const getMonthlyData = () => {
+      const incomeData = months.map(month => {
         const incomeInput = document.getElementById(`${month}-income`);
+        return incomeInput ? parseFloat(incomeInput.value) || 0 : 0;
+      });
+
+      const expensesData = months.map(month => {
         const expensesInput = document.getElementById(`${month}-expenses`);
-
-        const income = incomeInput ? parseFloat(incomeInput.value) || 0 : 0;
-        const expenses = expensesInput
-          ? parseFloat(expensesInput.value) || 0
-          : 0;
-
-        incomeData.push(income);
-        expensesData.push(expenses);
+        return expensesInput ? parseFloat(expensesInput.value) || 0 : 0;
       });
 
       return { incomeData, expensesData };
-    }
+    };
 
-    // Sample data for the bar chart
     const { incomeData, expensesData } = getMonthlyData();
 
     const data = {
-      labels: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ],
+      labels: months.map(
+        month => month.charAt(0).toUpperCase() + month.slice(1)
+      ),
       datasets: [
         {
           label: "Income",
@@ -94,10 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ],
     };
 
-    // Chart configuration
     const config = {
       type: "bar",
-      data: data,
+      data,
       options: {
         responsive: true,
         plugins: {
@@ -112,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     };
 
-    // Render the chart
     const chart = new Chart(ctx, config);
 
     // Update chart data dynamically when inputs change
@@ -124,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chart.update();
       });
     });
-  }
+  };
 
   // Listen for clicks on the "Chart" tab
   document.getElementById("chart-tab").addEventListener("click", () => {
@@ -137,12 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Download the canvas as an image
   document.getElementById("download").addEventListener("click", () => {
     const canvas = document.getElementById("barChart");
-    const image = canvas.toDataURL("image/png"); // Convert canvas to image data URL
+    const image = canvas.toDataURL("image/png");
 
-    // Create a temporary link element
     const link = document.createElement("a");
     link.href = image;
-    link.download = "chart.png"; // Set the default file name
-    link.click(); // Trigger the download
+    link.download = "chart.png";
+    link.click();
   });
 });
